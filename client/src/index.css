@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 
@@ -6,6 +6,7 @@
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   
+  /* Deep dark surface palette */
   --color-surface-50: #f8fafc;
   --color-surface-100: #f1f5f9;
   --color-surface-200: #e2e8f0;
@@ -17,34 +18,42 @@
   --color-surface-800: #1e293b;
   --color-surface-850: #162032;
   --color-surface-900: #0f172a;
-  --color-surface-950: #020617;
+  --color-surface-950: #060e1e;
   
+  /* Emerald accent – premium & vibrant */
   --color-accent: #10b981;
   --color-accent-light: #34d399;
   --color-accent-dark: #059669;
-  --color-accent-glow: rgba(16, 185, 129, 0.15);
+  --color-accent-glow: rgba(16, 185, 129, 0.18);
   
-  --color-danger: #ef4444;
+  /* Semantic colors */
+  --color-danger: #f43f5e;
   --color-warning: #f59e0b;
-  --color-info: #3b82f6;
+  --color-info: #6366f1;
   --color-success: #10b981;
   
+  /* Radii */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-full: 9999px;
   
-  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
-  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.2);
+  /* Shadows */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 24px rgba(16, 185, 129, 0.25);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.3), 0 8px 32px rgba(0,0,0,0.2);
   
+  /* Animations */
   --animate-fade-in: fade-in 0.5s ease-out;
-  --animate-slide-up: slide-up 0.4s ease-out;
+  --animate-slide-up: slide-up 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   --animate-slide-down: slide-down 0.3s ease-out;
   --animate-pulse-ring: pulse-ring 2s ease-in-out infinite;
   --animate-shimmer: shimmer 1.5s infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-glow-pulse: glow-pulse 3s ease-in-out infinite;
 }
 
 @keyframes fade-in {
@@ -53,12 +62,12 @@
 }
 
 @keyframes slide-up {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slide-down {
-  from { opacity: 0; transform: translateY(-10px); }
+  from { opacity: 0; transform: translateY(-12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -72,8 +81,30 @@
   100% { background-position: 200% 0; }
 }
 
-/* Base styles */
-* {
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); }
+  50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.35); }
+}
+
+@keyframes border-glow {
+  0%, 100% { border-color: rgba(16, 185, 129, 0.2); }
+  50% { border-color: rgba(16, 185, 129, 0.5); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ==============================
+   BASE RESET & DEFAULTS
+   ============================== */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -83,51 +114,76 @@ html {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background-color: #020617;
-  color: #f1f5f9;
+  background-color: #060e1e;
+  color: #e2e8f0;
   min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 10% 0%, rgba(16, 185, 129, 0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 100%, rgba(99, 102, 241, 0.04) 0%, transparent 60%);
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+/* ==============================
+   PREMIUM SCROLLBAR
+   ============================== */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 3px;
+  background: rgba(148, 163, 184, 0.15);
+  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: rgba(148, 163, 184, 0.3);
 }
 
-/* Custom utilities */
+/* ==============================
+   GLASSMORPHISM UTILITIES
+   ============================== */
 .glass {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(9, 18, 38, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.08);
 }
 
 .glass-light {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background: rgba(30, 41, 59, 0.5);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  background: rgba(22, 32, 50, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.12);
 }
 
+.glass-card {
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: linear-gradient(135deg, rgba(22, 32, 50, 0.9) 0%, rgba(9, 18, 38, 0.8) 100%);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  box-shadow: var(--shadow-card);
+}
+
+/* ==============================
+   GRADIENT TEXT
+   ============================== */
 .gradient-text {
-  background: linear-gradient(135deg, #10b981, #34d399);
+  background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+.gradient-text-cool {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ==============================
+   CARD SHINE EFFECT
+   ============================== */
 .card-shine {
   position: relative;
   overflow: hidden;
@@ -136,9 +192,76 @@ body {
   content: '';
   position: absolute;
   top: -50%;
-  left: -50%;
-  width: 200%;
+  left: -75%;
+  width: 50%;
   height: 200%;
-  background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.03) 50%, transparent 60%);
-  animation: shimmer 3s infinite;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%
+  );
+  transform: skewX(-25deg);
+  animation: card-shine-move 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes card-shine-move {
+  0% { left: -75%; }
+  60%, 100% { left: 150%; }
+}
+
+/* ==============================
+   PREMIUM NOISE TEXTURE OVERLAY
+   ============================== */
+.noise-overlay {
+  position: relative;
+}
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  border-radius: inherit;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ==============================
+   ANIMATED GRADIENT BORDER
+   ============================== */
+.glow-border {
+  animation: border-glow 3s ease-in-out infinite;
+}
+
+/* ==============================
+   FOCUS RING
+   ============================== */
+:focus-visible {
+  outline: 2px solid rgba(16, 185, 129, 0.6);
+  outline-offset: 2px;
+}
+
+/* ==============================
+   SELECTION COLOR
+   ============================== */
+::selection {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+/* ==============================
+   TYPOGRAPHY HELPERS
+   ============================== */
+.text-balance { text-wrap: balance; }
+
+/* ==============================
+   STAT NUMBER STYLE
+   ============================== */
+.stat-number {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }

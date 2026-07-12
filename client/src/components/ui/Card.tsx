@@ -3,6 +3,7 @@ import React from 'react';
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   hover?: boolean;
   glow?: boolean;
+  variant?: 'default' | 'elevated' | 'ghost' | 'accent';
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -10,14 +11,23 @@ export const Card: React.FC<CardProps> = ({
   children,
   hover = false,
   glow = false,
+  variant = 'default',
   ...props
 }) => {
+  const variants = {
+    default: 'glass-card',
+    elevated: 'glass-card shadow-lg',
+    ghost: 'bg-transparent border border-surface-800/40',
+    accent: 'bg-gradient-to-br from-accent/5 to-accent/0 border border-accent/20',
+  };
+
   return (
     <div
       className={`
-        glass rounded-2xl p-5 border border-surface-700/30 text-surface-100 shadow-md relative overflow-hidden transition-all duration-300
-        ${hover ? 'hover:-translate-y-1 hover:shadow-lg hover:border-surface-600/40 hover:bg-slate-900/80 cursor-pointer' : ''}
-        ${glow ? 'before:absolute before:inset-0 before:p-[1px] before:bg-gradient-to-r before:from-accent/40 before:to-accent-light/10 before:rounded-2xl before:-z-10 bg-slate-900/90' : ''}
+        ${variants[variant]}
+        rounded-2xl p-5 text-surface-100 relative overflow-hidden transition-all duration-300
+        ${hover ? 'hover:-translate-y-1 hover:shadow-lg hover:border-surface-700/30 cursor-pointer' : ''}
+        ${glow ? 'glow-border shadow-[0_0_30px_rgba(16,185,129,0.12)]' : ''}
         ${className}
       `}
       {...props}

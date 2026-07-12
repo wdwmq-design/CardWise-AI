@@ -10,7 +10,10 @@ import {
   Sparkles,
   Plane,
   X,
-  CreditCard as CardIcon
+  CreditCard as CardIcon,
+  CheckCircle,
+  HelpCircle,
+  AlertCircle
 } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
 import { CREDIT_CARDS } from '../data/cards';
@@ -53,15 +56,15 @@ export const MyWallet: React.FC = () => {
     <div className="space-y-6">
       
       {/* Page Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight font-sans">AI Wallet Manager</h1>
-          <p className="text-surface-400 font-medium">Add or remove cards to calibrate the AI recommendation model.</p>
+          <h1 className="text-2xl font-black tracking-tight text-surface-50">AI Wallet Manager</h1>
+          <p className="text-sm text-surface-500 font-medium mt-0.5">Add or remove cards to calibrate the AI recommendation model.</p>
         </div>
         <Button 
           onClick={() => setIsAddModalOpen(true)} 
-          icon={<Plus className="w-5 h-5" />}
-          className="font-bold shadow-glow shadow-accent/15"
+          icon={<Plus className="w-4.5 h-4.5" />}
+          className="font-bold shrink-0"
         >
           Add Credit Card
         </Button>
@@ -84,20 +87,20 @@ export const MyWallet: React.FC = () => {
                   className={`
                     p-6 rounded-2xl border cursor-pointer relative overflow-hidden flex flex-col justify-between aspect-[1.58/1] transition-all duration-300 shadow-md card-shine
                     ${isCurrentlySelected 
-                      ? 'border-accent shadow-[0_0_20px_rgba(16,185,129,0.2)]' 
-                      : 'border-surface-800 hover:border-surface-700'
+                      ? 'border-accent shadow-[0_0_24px_rgba(16,185,129,0.35)] scale-[1.01]' 
+                      : 'border-surface-800 hover:border-surface-700/60'
                     }
                   `}
                   style={{ background: `linear-gradient(135deg, ${card.gradient[0]}, ${card.gradient[1]})` }}
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <span className="text-[10px] uppercase font-bold opacity-75 tracking-wider">{card.bank}</span>
-                      <h3 className="text-lg font-bold tracking-tight mt-0.5 leading-tight">{card.name}</h3>
+                      <span className="text-[10px] uppercase font-bold opacity-80 tracking-widest text-white/95">{card.bank}</span>
+                      <h3 className="text-lg font-black tracking-tight mt-1 leading-tight text-white">{card.name}</h3>
                     </div>
                     <button
                       onClick={(e) => handleRemoveCard(e, card.id)}
-                      className="p-1.5 bg-slate-950/40 hover:bg-danger/25 text-surface-400 hover:text-danger border border-transparent hover:border-danger/20 rounded-lg transition-colors cursor-pointer"
+                      className="p-1.5 bg-slate-950/40 hover:bg-danger/25 text-white/70 hover:text-danger border border-transparent hover:border-danger/20 rounded-xl transition-all duration-200 cursor-pointer"
                       title="Remove card from wallet"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -105,10 +108,10 @@ export const MyWallet: React.FC = () => {
                   </div>
 
                   <div className="flex items-end justify-between">
-                    <span className="text-[10px] bg-slate-950/40 px-2 py-0.5 rounded font-mono font-bold tracking-widest text-slate-350">
+                    <span className="text-[10px] bg-slate-950/40 px-2 py-0.5 rounded font-mono font-bold tracking-widest text-white/80">
                       {card.network.toUpperCase()}
                     </span>
-                    <span className="text-xs font-semibold text-slate-200">
+                    <span className="text-xs font-bold text-white/95 uppercase tracking-wide">
                       {card.annualFee === 0 ? 'Lifetime Free' : `₹${card.annualFee}/yr`}
                     </span>
                   </div>
@@ -119,84 +122,92 @@ export const MyWallet: React.FC = () => {
             {walletCards.length === 0 && (
               <div 
                 onClick={() => setIsAddModalOpen(true)}
-                className="col-span-full border-2 border-dashed border-surface-800 hover:border-surface-750/70 p-12 rounded-2xl flex flex-col items-center justify-center gap-3 cursor-pointer group transition-colors"
+                className="col-span-full border-2 border-dashed border-surface-800 hover:border-surface-700/60 p-12 rounded-2xl flex flex-col items-center justify-center gap-3.5 cursor-pointer group transition-all duration-300"
               >
-                <div className="w-12 h-12 rounded-xl bg-surface-900 border border-surface-800/80 flex items-center justify-center text-surface-500 group-hover:text-accent group-hover:border-accent/40 transition-colors">
-                  <CardIcon className="w-6 h-6" />
+                <div className="w-12 h-12 rounded-xl bg-surface-900 border border-surface-800/80 flex items-center justify-center text-surface-500 group-hover:text-accent group-hover:border-accent/40 transition-all">
+                  <CardIcon className="w-5 h-5" />
                 </div>
-                <h4 className="text-sm font-bold text-surface-300">Your Wallet is Empty</h4>
-                <p className="text-xs text-surface-550 max-w-xs text-center font-medium leading-normal">
+                <h4 className="text-sm font-bold text-surface-200">Your Wallet is Empty</h4>
+                <p className="text-xs text-surface-500 max-w-xs text-center font-medium leading-relaxed">
                   Add credit cards to enable the AI Purchase Advisor to find the best savings.
                 </p>
+                <Button size="sm" variant="outline" className="mt-1">Add a Card</Button>
               </div>
             )}
           </div>
         </div>
 
         {/* Right Column: Selected Card Detail Panel (1/3 width) */}
-        <div>
+        <div className="lg:h-fit sticky top-24">
           <AnimatePresence mode="wait">
             {selectedCard ? (
               <motion.div
                 key={selectedCard.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ type: 'spring', damping: 25 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.25 }}
               >
-                <Card className="p-6 border border-surface-800 space-y-6 relative overflow-hidden">
+                <Card className="p-6 border border-surface-800/60 space-y-6 relative overflow-hidden glass-card">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+                  
                   <div className="flex justify-between items-start">
                     <div>
-                      <span className="text-xs font-semibold text-accent uppercase tracking-wider">{selectedCard.bank} details</span>
-                      <h3 className="text-lg font-bold text-surface-100">{selectedCard.name}</h3>
+                      <span className="text-[10px] font-bold text-accent uppercase tracking-widest">{selectedCard.bank} details</span>
+                      <h3 className="text-base font-bold text-surface-50 mt-1 leading-tight">{selectedCard.name}</h3>
                     </div>
                     <button 
                       onClick={() => setSelectedCard(null)} 
-                      className="p-1 hover:bg-surface-800 text-surface-550 hover:text-surface-200 rounded-lg cursor-pointer"
+                      className="p-1 hover:bg-surface-800/60 text-surface-500 hover:text-surface-200 rounded-lg cursor-pointer transition-colors"
                     >
                       <X className="w-4 h-4" />
                     </button>
                   </div>
 
                   {/* Highlights Bullet List */}
-                  <div className="space-y-2">
-                    <span className="text-[10px] text-surface-500 font-bold uppercase tracking-wider">Features & Highlights</span>
-                    <ul className="space-y-2">
+                  <div className="space-y-3">
+                    <span className="text-[10px] text-surface-500 font-bold uppercase tracking-widest block">Features & Highlights</span>
+                    <ul className="space-y-2.5">
                       {selectedCard.highlights.map((h: string, idx: number) => (
                         <li key={idx} className="text-xs text-surface-300 flex items-start gap-2 font-medium leading-relaxed">
-                          <span className="text-accent mt-1 select-none font-bold">✓</span> {h}
+                          <CheckCircle className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
+                          <span>{h}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
                   {/* Fee and Waiver Rules */}
-                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-surface-850/50">
-                    <div>
-                      <span className="text-[10px] text-surface-500 font-bold uppercase tracking-wider">Annual Fee</span>
-                      <p className="text-sm font-bold text-surface-200 mt-0.5">
-                        {selectedCard.annualFee === 0 ? 'N/A' : `₹${selectedCard.annualFee}`}
+                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-surface-800/40">
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-surface-500 font-bold uppercase tracking-widest block">Annual Fee</span>
+                      <p className="text-sm font-bold text-surface-150 stat-number">
+                        {selectedCard.annualFee === 0 ? 'N/A' : `₹${selectedCard.annualFee.toLocaleString('en-IN')}`}
                       </p>
                     </div>
-                    <div>
-                      <span className="text-[10px] text-surface-500 font-bold uppercase tracking-wider">Waiver Target</span>
-                      <p className="text-xs font-bold text-surface-300 mt-0.5 leading-relaxed">
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-surface-500 font-bold uppercase tracking-widest block">Waiver Target</span>
+                      <p className="text-xs font-semibold text-surface-300 leading-relaxed">
                         {selectedCard.feeWaiverCriteria}
                       </p>
                     </div>
                   </div>
 
                   {/* Lounge Access Info */}
-                  <div className="pt-4 border-t border-surface-850/50 space-y-2">
-                    <span className="text-[10px] text-surface-500 font-bold uppercase tracking-wider">Lounge Access Rules</span>
+                  <div className="pt-4 border-t border-surface-800/40 space-y-2.5">
+                    <span className="text-[10px] text-surface-500 font-bold uppercase tracking-widest block">Lounge Access Rules</span>
                     <div className="flex gap-4">
-                      <div className="flex items-center gap-1.5 text-xs text-surface-350 font-medium">
-                        <Plane className="w-4 h-4 text-indigo-400 shrink-0" />
-                        <span>Domestic: <span className="font-bold text-surface-200">{selectedCard.loungeAccess.domestic === -1 ? 'Unlimited' : selectedCard.loungeAccess.domestic}</span></span>
+                      <div className="flex items-center gap-2 text-xs text-surface-300 font-medium">
+                        <div className="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/15 flex items-center justify-center shrink-0">
+                          <Plane className="w-3.5 h-3.5 text-indigo-400" />
+                        </div>
+                        <span>Domestic: <span className="font-bold text-surface-100">{selectedCard.loungeAccess.domestic === -1 ? 'Unlimited' : selectedCard.loungeAccess.domestic}</span></span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-xs text-surface-350 font-medium">
-                        <Plane className="w-4 h-4 text-amber-400 shrink-0" />
-                        <span>Intl: <span className="font-bold text-surface-200">{selectedCard.loungeAccess.international === -1 ? 'Unlimited' : selectedCard.loungeAccess.international}</span></span>
+                      <div className="flex items-center gap-2 text-xs text-surface-300 font-medium">
+                        <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/15 flex items-center justify-center shrink-0">
+                          <Plane className="w-3.5 h-3.5 text-amber-400" />
+                        </div>
+                        <span>Intl: <span className="font-bold text-surface-100">{selectedCard.loungeAccess.international === -1 ? 'Unlimited' : selectedCard.loungeAccess.international}</span></span>
                       </div>
                     </div>
                   </div>
@@ -204,10 +215,12 @@ export const MyWallet: React.FC = () => {
                 </Card>
               </motion.div>
             ) : (
-              <Card className="p-8 text-center border border-dashed border-surface-800 text-surface-550 flex flex-col items-center justify-center gap-2">
-                <CardIcon className="w-8 h-8 opacity-40 text-surface-500" />
-                <h4 className="text-xs font-bold text-surface-450 uppercase tracking-wide">No Card Selected</h4>
-                <p className="text-xs text-surface-550 max-w-[200px] leading-normal font-medium">
+              <Card className="p-8 text-center border border-dashed border-surface-800/60 text-surface-500 flex flex-col items-center justify-center gap-3 glass-card">
+                <div className="w-10 h-10 rounded-xl bg-surface-900 border border-surface-800/60 flex items-center justify-center text-surface-500">
+                  <AlertCircle className="w-4.5 h-4.5" />
+                </div>
+                <h4 className="text-xs font-bold text-surface-450 uppercase tracking-widest">No Card Selected</h4>
+                <p className="text-xs text-surface-500 max-w-[220px] leading-relaxed font-medium">
                   Click any card to inspect category bonuses, annual fees, and airport lounge rules.
                 </p>
               </Card>
@@ -226,43 +239,44 @@ export const MyWallet: React.FC = () => {
         <div className="space-y-4">
           <Input 
             placeholder="Search cards by bank or name..."
-            icon={<Search className="w-4 h-4" />}
+            icon={<Search className="w-4 h-4 text-surface-550" />}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
 
-          <div className="space-y-2 max-y-[45vh] overflow-y-auto pr-1">
+          <div className="space-y-2 max-h-[40vh] overflow-y-auto pr-1">
             {filteredAvailableCards.map((card) => (
               <div 
                 key={card.id} 
-                className="flex items-center justify-between p-3 border border-surface-850 bg-surface-900/35 hover:bg-surface-850/30 rounded-xl transition-all"
+                className="flex items-center justify-between p-3.5 border border-surface-850 bg-surface-900/35 hover:bg-surface-850/40 rounded-xl transition-all duration-200"
               >
                 <div className="flex items-center gap-3">
                   <div 
-                    className="w-11 h-7 rounded flex items-center justify-center font-black text-[8px] text-white shrink-0 shadow-sm"
+                    className="w-11 h-7 rounded flex items-center justify-center font-black text-[8px] text-white shrink-0 shadow-sm card-shine"
                     style={{ background: `linear-gradient(135deg, ${card.gradient[0]}, ${card.gradient[1]})` }}
                   >
                     {card.bank}
                   </div>
                   <div>
-                    <h5 className="text-sm font-bold text-surface-250 leading-tight">{card.name}</h5>
-                    <p className="text-[10px] text-surface-500 font-semibold mt-0.5">{card.network.toUpperCase()} • {card.annualFee === 0 ? 'Lifetime Free' : `₹${card.annualFee}/yr`}</p>
+                    <h5 className="text-xs font-bold text-surface-150 leading-tight">{card.name}</h5>
+                    <p className="text-[10px] text-surface-500 font-bold uppercase tracking-wider mt-0.5">{card.network.toUpperCase()} • {card.annualFee === 0 ? 'Lifetime Free' : `₹${card.annualFee}/yr`}</p>
                   </div>
                 </div>
 
                 <Button 
                   onClick={() => handleAddCard(card.id)}
                   size="sm"
-                  variant="primary"
-                  className="font-semibold text-xs py-1.5"
+                  className="font-bold text-xs"
                 >
-                  Add Card
+                  Add
                 </Button>
               </div>
             ))}
 
             {filteredAvailableCards.length === 0 && (
-              <p className="text-center text-xs text-surface-550 font-bold py-6">All available cards are in your wallet!</p>
+              <div className="text-center py-8">
+                <p className="text-xs text-surface-550 font-bold uppercase tracking-wider">All available cards are in your wallet!</p>
+              </div>
             )}
           </div>
         </div>

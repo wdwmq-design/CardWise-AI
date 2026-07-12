@@ -126,25 +126,26 @@ export const Chatbot: React.FC = () => {
   ];
 
   return (
-    <Card className="flex flex-col h-[calc(100vh-10rem)] border border-surface-800/80 p-0 overflow-hidden">
+    <Card className="flex flex-col h-[calc(100vh-10rem)] border border-surface-800/60 p-0 overflow-hidden glass-card relative">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
       
       {/* Chat header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-surface-800 bg-surface-950/40">
+      <div className="flex items-center justify-between px-6 py-4.5 border-b border-surface-800/60 bg-surface-950/20">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-accent/15 flex items-center justify-center text-accent">
-            <Bot className="w-5 h-5 animate-pulse" />
+          <div className="w-9 h-9 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent shadow-[0_0_10px_rgba(16,185,129,0.15)]">
+            <Bot className="w-4.5 h-4.5 animate-pulse" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-surface-200">Contextual Card Advisor</h3>
-            <p className="text-[10px] text-surface-500 font-bold uppercase tracking-wider flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-accent" /> Active Wallet Grounded
+            <h3 className="text-sm font-bold text-surface-200">Contextual Card Advisor</h3>
+            <p className="text-[9px] text-surface-500 font-bold uppercase tracking-widest flex items-center gap-1 mt-0.5">
+              <Sparkles className="w-2.5 h-2.5 text-accent" /> Active Wallet Grounded
             </p>
           </div>
         </div>
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
         {messages.map((m) => {
           const isUser = m.role === 'user';
           return (
@@ -155,20 +156,20 @@ export const Chatbot: React.FC = () => {
               className={`flex gap-3 max-w-[85%] ${isUser ? 'ml-auto flex-row-reverse' : 'mr-auto'}`}
             >
               {/* Profile icon bubble */}
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border transition-all duration-200
                 ${isUser 
-                  ? 'bg-accent/15 border-accent/20 text-accent font-bold' 
-                  : 'bg-surface-800 border-surface-700/50 text-surface-300'
+                  ? 'bg-accent/10 border-accent/20 text-accent font-bold shadow-[0_0_10px_rgba(16,185,129,0.1)]' 
+                  : 'bg-surface-800/80 border-surface-700/50 text-surface-300'
                 }
               `}>
-                {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+                {isUser ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
               </div>
 
               {/* Text bubble */}
-              <div className={`p-4 rounded-2xl text-sm leading-relaxed whitespace-pre-line font-medium
+              <div className={`p-4 rounded-2xl text-xs md:text-sm leading-relaxed whitespace-pre-line font-medium
                 ${isUser 
                   ? 'bg-accent/10 border border-accent/20 text-accent rounded-tr-none' 
-                  : 'bg-surface-900/50 border border-surface-800/80 text-surface-250 rounded-tl-none'
+                  : 'bg-surface-900/40 border border-surface-850/60 text-surface-200 rounded-tl-none'
                 }
               `}>
                 {m.content}
@@ -183,13 +184,13 @@ export const Chatbot: React.FC = () => {
             animate={{ opacity: 1 }}
             className="flex gap-3 mr-auto"
           >
-            <div className="w-8 h-8 rounded-lg bg-surface-800 border border-surface-700/50 flex items-center justify-center text-surface-300">
-              <Bot className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-xl bg-surface-800/80 border border-surface-700/50 flex items-center justify-center text-surface-300">
+              <Bot className="w-3.5 h-3.5" />
             </div>
-            <div className="bg-surface-900/50 border border-surface-800/80 p-4 rounded-2xl rounded-tl-none flex items-center gap-1.5">
-              <span className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-              <span className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-              <span className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            <div className="bg-surface-900/40 border border-surface-850/60 p-4 rounded-2xl rounded-tl-none flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-accent rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-1.5 h-1.5 bg-accent rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-1.5 h-1.5 bg-accent rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
           </motion.div>
         )}
@@ -198,12 +199,12 @@ export const Chatbot: React.FC = () => {
 
       {/* Suggested chips panel */}
       {messages.length === 1 && (
-        <div className="px-6 py-2 flex flex-wrap gap-2 border-t border-surface-850/60 bg-surface-950/20">
+        <div className="px-6 py-3.5 flex flex-wrap gap-2 border-t border-surface-850/40 bg-surface-950/20">
           {suggestionChips.map((chip, idx) => (
             <button
               key={idx}
               onClick={(e) => handleSend(e, chip)}
-              className="text-xs bg-surface-900/40 hover:bg-surface-800 text-surface-400 hover:text-surface-200 border border-surface-800/80 hover:border-surface-700 px-3.5 py-1.5 rounded-full transition-all cursor-pointer"
+              className="text-[10px] bg-surface-900/40 hover:bg-surface-800 text-surface-400 hover:text-surface-200 border border-surface-800 hover:border-surface-700 px-3.5 py-1.5 rounded-full transition-all cursor-pointer font-semibold uppercase tracking-wider"
             >
               {chip}
             </button>
@@ -212,14 +213,14 @@ export const Chatbot: React.FC = () => {
       )}
 
       {/* Footer message composer input */}
-      <div className="p-4 border-t border-surface-800 bg-surface-950/40">
+      <div className="p-4 border-t border-surface-800/60 bg-surface-950/20">
         <form onSubmit={(e) => handleSend(e)} className="flex items-center gap-2">
           <input
             type="text"
             placeholder="Type your question about card benefits..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="flex-1 bg-surface-900 border border-surface-800 text-surface-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50 transition-all placeholder:text-surface-600 font-medium"
+            className="flex-1 bg-surface-900/60 border border-surface-800/80 text-surface-100 rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-accent/40 focus:border-accent/50 transition-all placeholder:text-surface-600 font-medium"
             disabled={isLoading}
           />
           <Button type="submit" size="md" className="py-3 px-4 font-bold" disabled={!input.trim() || isLoading}>

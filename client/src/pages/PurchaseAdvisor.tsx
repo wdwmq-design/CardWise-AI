@@ -9,7 +9,10 @@ import {
   ArrowLeftRight, 
   Info,
   ChevronRight,
-  MessageSquare
+  MessageSquare,
+  Zap,
+  TrendingUp,
+  AlertCircle
 } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
 import { CREDIT_CARDS } from '../data/cards';
@@ -53,7 +56,6 @@ export const PurchaseAdvisor: React.FC = () => {
     setIsLoading(true);
     setHasSearched(true);
 
-    // Simulate <2s high-speed skeleton loading for hackathon visual polish
     const start = Date.now();
 
     // Get mathematical analysis locally
@@ -91,7 +93,7 @@ export const PurchaseAdvisor: React.FC = () => {
     } catch (apiError) {
       console.warn('Backend server not responding, running local AI recommendation algorithm...');
       
-      // Local Mock AI reasoning generator (grounds in actual card benefits correctly)
+      // Local Mock AI reasoning generator
       const card = primaryRecommendation.card;
       let textReasoning = `We recommend swiping the ${card.name} because it gives you `;
       
@@ -129,7 +131,6 @@ export const PurchaseAdvisor: React.FC = () => {
       setAlternatives(localAlts);
     }
 
-    // Ensure skeleton shows for at least 800ms for demo effect
     const elapsed = Date.now() - start;
     const minWait = 950;
     if (elapsed < minWait) {
@@ -154,7 +155,6 @@ export const PurchaseAdvisor: React.FC = () => {
 
   const handleAskFollowUp = () => {
     if (!bestCard) return;
-    // Redirect to chatbot with context
     localStorage.setItem('cardwise_chat_context', JSON.stringify({
       query,
       recommendedCardId: bestCard.id,
@@ -164,16 +164,17 @@ export const PurchaseAdvisor: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-6">
       
       {/* Search Console Card */}
-      <Card className="p-6 md:p-8 space-y-6">
+      <Card className="p-6 md:p-8 space-y-6 glass-card relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center text-accent">
+          <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent">
             <Sparkles className="w-5 h-5 animate-pulse" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-surface-200">Instant Purchase Advisor</h3>
+            <h3 className="text-base font-bold text-surface-200">Instant Purchase Advisor</h3>
             <p className="text-xs text-surface-500 font-medium">Describe your next transaction to identify the highest earning card.</p>
           </div>
         </div>
@@ -184,23 +185,23 @@ export const PurchaseAdvisor: React.FC = () => {
             placeholder="e.g. I'm buying an iPhone worth ₹80,000 on Flipkart..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 bg-surface-900 border border-surface-800 text-surface-100 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all placeholder:text-surface-600 font-medium"
+            className="flex-1 bg-surface-900/60 hover:bg-surface-900/85 border border-surface-800 text-surface-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all placeholder:text-surface-600 font-medium"
             disabled={isLoading}
           />
-          <Button type="submit" className="px-6 font-bold" isLoading={isLoading} disabled={!query.trim()}>
+          <Button type="submit" className="px-6 font-bold text-sm shrink-0" isLoading={isLoading} disabled={!query.trim()}>
             Get Advice
           </Button>
         </form>
 
         {/* Suggestion Prompts */}
-        <div className="space-y-2">
-          <span className="text-xs text-surface-500 font-bold uppercase tracking-wider">Try typing:</span>
+        <div className="space-y-2.5">
+          <span className="text-[10px] text-surface-500 font-bold uppercase tracking-widest block">Try typing:</span>
           <div className="flex flex-wrap gap-2">
             {samplePrompts.map((p, idx) => (
               <button
                 key={idx}
                 onClick={() => handlePromptSelect(p)}
-                className="text-xs bg-surface-850 hover:bg-surface-800 text-surface-300 hover:text-surface-100 px-3.5 py-2 rounded-xl border border-surface-800 hover:border-surface-700/50 transition-all text-left cursor-pointer"
+                className="text-xs bg-surface-900/50 hover:bg-surface-850/80 text-surface-400 hover:text-surface-200 px-3.5 py-2 rounded-xl border border-surface-800/80 hover:border-surface-750/70 transition-all text-left cursor-pointer font-medium"
               >
                 {p}
               </button>
@@ -209,6 +210,14 @@ export const PurchaseAdvisor: React.FC = () => {
         </div>
       </Card>
 
+      {/* Error render */}
+      {error && (
+        <div className="flex items-center gap-2.5 p-4 bg-danger/10 border border-danger/20 text-danger text-xs font-semibold rounded-2xl animate-fade-in">
+          <AlertCircle className="w-4 h-4 shrink-0 text-danger" />
+          <span>{error}</span>
+        </div>
+      )}
+
       {/* Advice Rendering */}
       <AnimatePresence mode="wait">
         {isLoading && (
@@ -216,10 +225,9 @@ export const PurchaseAdvisor: React.FC = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="space-y-6"
+            className="space-y-4"
           >
-            {/* Skeleton loading mimicking actual layout */}
-            <Card className="p-6 md:p-8 space-y-6">
+            <Card className="p-6 md:p-8 space-y-6 glass-card">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="flex items-center gap-4 w-1/2">
                   <Skeleton className="w-16 h-10 rounded-lg shrink-0" />
@@ -244,75 +252,76 @@ export const PurchaseAdvisor: React.FC = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', damping: 25 }}
-            className="space-y-6"
+            className="space-y-4 animate-fade-in"
           >
             {/* Primary Recommendation Card */}
-            <Card glow className="p-6 md:p-8 space-y-6">
+            <Card glow className="p-6 md:p-8 space-y-6 glass-card relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
               
               {/* Header: Winner Banner & Button */}
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-surface-850/60">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-surface-800/40">
                 <div className="flex items-center gap-4">
                   {/* Card Icon */}
                   <div 
-                    className="w-16 h-10 rounded-xl shadow-md shrink-0 flex items-center justify-center font-black text-xs text-white"
+                    className="w-14 h-9 rounded-xl shadow-md shrink-0 flex items-center justify-center font-black text-[9px] text-white card-shine"
                     style={{ background: `linear-gradient(135deg, ${bestCard.gradient[0]}, ${bestCard.gradient[1]})` }}
                   >
                     {bestCard.bank}
                   </div>
                   <div>
-                    <span className="text-xs text-accent font-extrabold uppercase tracking-wider flex items-center gap-1">
+                    <span className="text-[9px] text-accent font-black uppercase tracking-widest flex items-center gap-1">
                       Recommended Card
                     </span>
-                    <h3 className="text-xl font-extrabold text-surface-100">{bestCard.name}</h3>
+                    <h3 className="text-base font-extrabold text-surface-100">{bestCard.name}</h3>
                   </div>
                 </div>
 
-                <div className="text-right flex items-center gap-3">
+                <div className="text-right flex items-center gap-4 shrink-0">
                   <div className="text-left sm:text-right">
-                    <div className="text-2xl font-black font-mono text-accent">
+                    <div className="text-xl font-black stat-number text-accent">
                       <AnimatedNumber value={savingsAmt + rewardVal} decimals={2} />
                     </div>
-                    <p className="text-[10px] text-surface-500 font-bold uppercase tracking-wider">Total Savings</p>
+                    <p className="text-[9px] text-surface-500 font-bold uppercase tracking-widest">Total Savings</p>
                   </div>
-                  <Button onClick={handleLogPurchase} size="sm" className="font-semibold">
+                  <Button onClick={handleLogPurchase} size="sm" className="font-bold text-xs">
                     Log Spends
                   </Button>
                 </div>
               </div>
 
               {/* Explanatory Reasoning block */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-bold text-surface-400 flex items-center gap-1.5">
-                  <Info className="w-4 h-4 text-accent" /> AI Explanation
+              <div className="space-y-2.5">
+                <h4 className="text-xs font-bold text-surface-400 flex items-center gap-1.5 uppercase tracking-wider">
+                  <Info className="w-4 h-4 text-accent shrink-0" /> AI Explanation
                 </h4>
-                <p className="text-sm md:text-base text-surface-200 leading-relaxed font-medium">
+                <p className="text-sm text-surface-200 leading-relaxed font-medium">
                   {reasoning}
                 </p>
               </div>
 
               {/* Savings Breakdown Grid */}
-              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-surface-850/40 text-center">
-                <div className="bg-surface-900/30 p-3 rounded-xl border border-surface-800/55">
-                  <span className="text-xs text-surface-450 font-bold uppercase tracking-wider">Cashback</span>
-                  <div className="text-lg font-bold font-mono text-surface-200 mt-1">₹{savingsAmt.toFixed(2)}</div>
+              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-surface-800/40 text-center">
+                <div className="bg-surface-900/30 p-3.5 rounded-xl border border-surface-800/40">
+                  <span className="text-[9px] text-surface-500 font-bold uppercase tracking-widest">Cashback</span>
+                  <div className="text-base font-bold stat-number text-surface-200 mt-1">₹{savingsAmt.toFixed(2)}</div>
                 </div>
-                <div className="bg-surface-900/30 p-3 rounded-xl border border-surface-800/55">
-                  <span className="text-xs text-surface-450 font-bold uppercase tracking-wider">Reward Pts</span>
-                  <div className="text-lg font-bold font-mono text-surface-200 mt-1">{rewardPts} pts</div>
+                <div className="bg-surface-900/30 p-3.5 rounded-xl border border-surface-800/40">
+                  <span className="text-[9px] text-surface-500 font-bold uppercase tracking-widest">Reward Pts</span>
+                  <div className="text-base font-bold stat-number text-surface-200 mt-1">{rewardPts} pts</div>
                 </div>
-                <div className="bg-surface-900/30 p-3 rounded-xl border border-surface-800/55">
-                  <span className="text-xs text-surface-450 font-bold uppercase tracking-wider">Points Value</span>
-                  <div className="text-lg font-bold font-mono text-indigo-400 mt-1">₹{rewardVal.toFixed(2)}</div>
+                <div className="bg-surface-900/30 p-3.5 rounded-xl border border-surface-800/40">
+                  <span className="text-[9px] text-surface-500 font-bold uppercase tracking-widest">Points Value</span>
+                  <div className="text-base font-bold stat-number text-indigo-400 mt-1">₹{rewardVal.toFixed(2)}</div>
                 </div>
               </div>
 
               {/* Chat action button */}
-              <div className="flex justify-end pt-2">
+              <div className="flex justify-end">
                 <Button 
                   variant="ghost" 
                   size="sm" 
                   onClick={handleAskFollowUp} 
-                  icon={<MessageSquare className="w-4 h-4" />}
+                  icon={<MessageSquare className="w-3.5 h-3.5" />}
                   className="text-xs font-bold text-accent"
                 >
                   Ask AI: "Why not my other cards?"
@@ -323,32 +332,32 @@ export const PurchaseAdvisor: React.FC = () => {
 
             {/* Alternatives section */}
             {alternatives.length > 0 && (
-              <Card className="p-6 space-y-4">
-                <h4 className="text-sm font-extrabold text-surface-400 flex items-center gap-1.5 uppercase tracking-wider">
-                  <ArrowLeftRight className="w-4 h-4" /> Alternative Choices
+              <Card className="p-6 space-y-4 glass-card">
+                <h4 className="text-xs font-bold text-surface-400 flex items-center gap-1.5 uppercase tracking-widest">
+                  <ArrowLeftRight className="w-4 h-4 text-surface-550 shrink-0" /> Alternative Choices
                 </h4>
                 
                 <div className="space-y-3">
                   {alternatives.map((alt, idx) => (
                     <div 
                       key={idx} 
-                      className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-3.5 rounded-xl border border-surface-850 bg-surface-900/20 hover:border-surface-800 transition-colors"
+                      className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-3.5 rounded-xl border border-surface-850/60 bg-surface-900/25 hover:border-surface-800 transition-all duration-200"
                     >
                       <div className="flex items-center gap-3">
                         <div 
-                          className="w-12 h-8 rounded-lg flex items-center justify-center font-bold text-[9px] text-white shrink-0"
+                          className="w-12 h-8 rounded-lg flex items-center justify-center font-bold text-[9px] text-white shrink-0 shadow-sm"
                           style={{ background: `linear-gradient(135deg, ${alt.card.gradient[0]}, ${alt.card.gradient[1]})` }}
                         >
                           {alt.card.bank}
                         </div>
                         <div>
-                          <h5 className="text-sm font-bold text-surface-200">{alt.card.name}</h5>
-                          <p className="text-xs text-surface-500 font-medium mt-0.5">{alt.tradeoff}</p>
+                          <h5 className="text-xs font-bold text-surface-150 leading-tight">{alt.card.name}</h5>
+                          <p className="text-[11px] text-surface-500 font-medium mt-0.5">{alt.tradeoff}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-sm font-extrabold font-mono text-surface-300">₹{alt.savings.toFixed(2)}</div>
-                        <span className="text-[9px] text-surface-500 font-bold uppercase">Benefit</span>
+                      <div className="text-right shrink-0">
+                        <div className="text-xs font-bold stat-number text-surface-300">₹{alt.savings.toFixed(2)}</div>
+                        <span className="text-[9px] text-surface-550 font-bold uppercase">Benefit</span>
                       </div>
                     </div>
                   ))}
