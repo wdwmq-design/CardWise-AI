@@ -101,6 +101,21 @@
   to { opacity: 1; transform: translateX(0); }
 }
 
+@keyframes message-in-left {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes message-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes typing-dot {
+  0%, 60%, 100% { transform: scale(0.6); opacity: 0.4; }
+  30% { transform: scale(1); opacity: 1; }
+}
+
 /* ==============================
    BASE RESET & DEFAULTS
    ============================== */
@@ -265,3 +280,86 @@ body {
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
 }
+
+/* ==============================
+   3D TILT & PREMIUM DEPTH HELPERS
+   ============================== */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.premium-card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.5s ease, border-color 0.3s ease;
+}
+
+.premium-card-3d:hover {
+  transform: rotateX(6deg) rotateY(-4deg) translateZ(8px);
+  border-color: rgba(16, 185, 129, 0.25);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.45), 
+    0 0 25px rgba(16, 185, 129, 0.15);
+}
+
+.premium-card-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 30%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  animation: card-shine-move 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.radial-glow-green {
+  background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.12) 0%, transparent 60%);
+}
+
+.radial-glow-indigo {
+  background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 60%);
+}
+
+/* ==============================
+   CHAT BUBBLE STYLES
+   ============================== */
+.chat-bubble-user {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.06) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  color: #e2e8f0;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 2px 12px rgba(16, 185, 129, 0.08);
+}
+
+.chat-bubble-ai {
+  background: linear-gradient(135deg, rgba(22, 32, 50, 0.85) 0%, rgba(9, 18, 38, 0.75) 100%);
+  border: 1px solid rgba(148, 163, 184, 0.10);
+  color: #cbd5e1;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Typing animation dots */
+.typing-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #10b981;
+  animation: typing-dot 1.2s ease-in-out infinite;
+}
+
+/* Suggestion chip hover glow */
+.suggestion-chip:hover {
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.12);
+}
+
